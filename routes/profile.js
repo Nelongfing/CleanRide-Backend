@@ -51,4 +51,21 @@ router.post("/", protect, async (req, res) => {
   }
 });
 
+router.put("/", protect, async (req, res) => {
+  try {
+    const { image, fullName, number, email, street, city, district } = req.body;
+
+    const profile = await Profile.findOneAndUpdate(
+      { userId: req.user.id },
+      { image, fullName, number, email, street, city, district },
+      { new: true, upsert: true }
+    );
+
+    res.json(profile);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 export default router;
+

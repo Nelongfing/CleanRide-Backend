@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import express from "express";
 import mongoose from "mongoose";
 import authRoutes from "./routes/auth.js";
+import bookingRoutes from "./routes/booking.js";
 import profileRoutes from "./routes/profile.js";
 
 dotenv.config();
@@ -14,7 +15,7 @@ app.use(express.json());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
-
+app.use("/api/bookings", bookingRoutes);
 // Database + Server
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;

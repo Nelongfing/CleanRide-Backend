@@ -6,21 +6,30 @@ const router = express.Router();
 
 // Create a booking
 router.post("/", protect, async (req, res) => {
+  console.log("📦 Incoming booking:", req.body);
+
   try {
-    const { package: pkg, vehicle, location, total } = req.body; // rename package to pkg
+    const { package: pkg, vehicle, location, total } = req.body;
+    if (!pkg || !vehicle || !location || !total) {
+      console.log("❌ Missing required fields");
+      return res.status(400).json({ message: "Missing required booking fields" });
+    }
+
     const booking = await Booking.create({
       userId: req.user.id,
-      package: pkg,  // use pkg here
+      package: pkg,
       vehicle,
       location,
       total,
     });
+
+    console.log("✅ Booking saved:", booking);
     res.status(201).json(booking);
   } catch (err) {
+    console.error("❌ Error saving booking:", err);
     res.status(500).json({ message: err.message });
   }
 });
-
 // Get all bookings for a user
 router.get("/", protect, async (req, res) => {
   try {

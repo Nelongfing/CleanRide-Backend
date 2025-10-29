@@ -8,9 +8,10 @@ const bookingSchema = new mongoose.Schema({
     value: Number,
   },
   vehicle: {
-    type: String,
+    vehicleType: String, // renamed from 'type'
     category: String,
     title: String,
+    price: Number,
   },
   location: {
     latitude: Number,

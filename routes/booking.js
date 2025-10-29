@@ -6,30 +6,32 @@ const router = express.Router();
 
 // Create a booking
 router.post("/", protect, async (req, res) => {
-  console.log("📦 Incoming booking:", req.body);
-
   try {
     const { package: pkg, vehicle, location, total } = req.body;
-    if (!pkg || !vehicle || !location || !total) {
-      console.log("❌ Missing required fields");
-      return res.status(400).json({ message: "Missing required booking fields" });
-    }
+
+    // Log for debugging
+    console.log("📦 Sending booking:", { pkg, vehicle, location, total });
 
     const booking = await Booking.create({
       userId: req.user.id,
       package: pkg,
-      vehicle,
+      vehicle: {
+        vehicleType: vehicle.type,
+        category: vehicle.category,
+        title: vehicle.title,
+        price: vehicle.price,
+      },
       location,
       total,
     });
 
-    console.log("✅ Booking saved:", booking);
     res.status(201).json(booking);
   } catch (err) {
-    console.error("❌ Error saving booking:", err);
+    console.error("❌ Booking failed:", { message: err.message });
     res.status(500).json({ message: err.message });
   }
 });
+
 // Get all bookings for a user
 router.get("/", protect, async (req, res) => {
   try {
@@ -40,15 +42,11 @@ router.get("/", protect, async (req, res) => {
   }
 });
 
-// Update booking status (e.g., after PayPal payment)
+// Update booking status
 router.patch("/:id", protect, async (req, res) => {
   try {
     const { status } = req.body;
-    const booking = await Booking.findByIdAndUpdate(
-      req.params.id,
-      { status },
-      { new: true }
-    );
+    const booking = await Booking.findByIdAndUpdate(req.params.id, { status }, { new: true });
     res.json(booking);
   } catch (err) {
     res.status(500).json({ message: err.message });

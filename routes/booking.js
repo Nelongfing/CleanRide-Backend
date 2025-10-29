@@ -7,10 +7,10 @@ const router = express.Router();
 // Create a booking
 router.post("/", protect, async (req, res) => {
   try {
-    const { package, vehicle, location, total } = req.body;
+    const { package: pkg, vehicle, location, total } = req.body; // rename package to pkg
     const booking = await Booking.create({
       userId: req.user.id,
-      package,
+      package: pkg,  // use pkg here
       vehicle,
       location,
       total,
